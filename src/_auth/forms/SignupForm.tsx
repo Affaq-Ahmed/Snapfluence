@@ -1,4 +1,3 @@
-import React from 'react';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
@@ -16,8 +15,10 @@ import { SignupValidationSchema } from '@/lib/validations';
 import Loader from '@/components/shared/Loader';
 import { Link } from 'react-router-dom';
 import { CreateUserAccount } from '@/lib/appwrite/api';
+import { useToast } from '@/components/ui/use-toast';
 
 const SignupForm = () => {
+	const { toast } = useToast();
 	const isLoading = false;
 	// 1. Define your form.
 	const form = useForm<
@@ -36,10 +37,15 @@ const SignupForm = () => {
 	async function onSubmit(
 		values: z.infer<typeof SignupValidationSchema>
 	) {
-		console.log(values);
 		const newUser = await CreateUserAccount(values);
 
 		console.log(newUser);
+		if (!newUser) {
+			return toast({
+				title: 'Signup Failed, Please Try Again',
+			});
+		}
+		// const session = await signInAccount(values);
 	}
 	return (
 		<Form {...form}>
