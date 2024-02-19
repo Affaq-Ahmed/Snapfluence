@@ -55,10 +55,6 @@ const SignupForm = () => {
 		values: z.infer<typeof SignupValidationSchema>
 	) {
 		const newUser = await CreateUserAccount(values);
-
-		console.log(newUser);
-
-		console.log(newUser);
 		if (!newUser) {
 			return toast({
 				title: 'Signup Failed, Please Try Again',
@@ -69,7 +65,6 @@ const SignupForm = () => {
 			email: values.email,
 			password: values.password,
 		});
-
 		if (!session) {
 			return toast({
 				title: 'Signin Failed, Please Try Again',
@@ -77,7 +72,6 @@ const SignupForm = () => {
 		}
 
 		const isLoggedIn = await CheckAuthUser();
-
 		if (isLoggedIn) {
 			form.reset();
 			navigate('/');
