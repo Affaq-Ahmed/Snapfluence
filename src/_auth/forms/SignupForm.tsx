@@ -13,13 +13,30 @@ import {
 import { Input } from '@/components/ui/input';
 import { SignupValidationSchema } from '@/lib/validations';
 import Loader from '@/components/shared/Loader';
-import { Link } from 'react-router-dom';
-import { CreateUserAccount } from '@/lib/appwrite/api';
+import { Link, useNavigate } from 'react-router-dom';
 import { useToast } from '@/components/ui/use-toast';
+import {
+	useCreateUserAccountMutation,
+	useSignInAccountMutation,
+} from '@/lib/react-query/queriesAndMutations';
+import { useUserContext } from '@/context/AuthContext';
 
 const SignupForm = () => {
+	const { checkAuthUser, isLoading: isUserLoading } =
+		useUserContext();
 	const { toast } = useToast();
-	const isLoading = false;
+	const navigate = useNavigate();
+
+	const {
+		mutateAsync: CreateUserAccount,
+		isPending: isCreatingUser,
+	} = useCreateUserAccountMutation();
+
+	const {
+		mutateAsync: signInAccount,
+		isPending: isSigningIn,
+	} = useSignInAccountMutation();
+
 	// 1. Define your form.
 	const form = useForm<
 		z.infer<typeof SignupValidationSchema>
@@ -45,7 +62,32 @@ const SignupForm = () => {
 				title: 'Signup Failed, Please Try Again',
 			});
 		}
-		// const session = await signInAccount(values);
+
+		const session = await signInAccount({
+			email: values.email,
+			password: values.password,
+		});
+
+		if (!session) {
+			return toast({
+				title: 'Signin Failed, Please Try Again',
+			});
+		}
+
+		const isLoggedIn = await checkAuthUser();
+
+		if (isLoggedIn) {
+			form.reset();
+			navigate('/');
+			toast({
+				title: 'Welcome to Snapfluence',
+				description: 'You are now logged in',
+			});
+		} else {
+			toast({
+				title: 'Signup Failed, Please Try Again',
+			});
+		}
 	}
 	return (
 		<Form {...form}>
@@ -140,7 +182,7 @@ const SignupForm = () => {
 						type='submit'
 						className='shad-button_primary w-full flex items-center justify-center '
 					>
-						{isLoading ? (
+						{isCreatingUser ? (
 							<div className='flex justify-center gap-2'>
 								<Loader /> Loading...
 							</div>
