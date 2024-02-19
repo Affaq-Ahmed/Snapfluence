@@ -7,6 +7,7 @@ import {
 import {
 	CreateUserAccount,
 	SigninAccount,
+	signOutAccount,
 } from '../appwrite/api';
 import { INewUser } from '@/types';
 
@@ -22,5 +23,11 @@ export const useSignInAccountMutation = () => {
 			email: string;
 			password: string;
 		}) => SigninAccount(user),
+	});
+};
+
+export const useSignOutMutation = () => {
+	return useMutation({
+		mutationFn: signOutAccount,
 	});
 };
