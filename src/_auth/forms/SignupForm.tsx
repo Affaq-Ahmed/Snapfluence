@@ -22,10 +22,10 @@ import {
 import { useUserContext } from '@/context/AuthContext';
 
 const SignupForm = () => {
-	const { checkAuthUser, isLoading: isUserLoading } =
+	const { CheckAuthUser, isLoading: isUserLoading } =
 		useUserContext();
-	const { toast } = useToast();
 	const navigate = useNavigate();
+	const { toast } = useToast();
 
 	const {
 		mutateAsync: CreateUserAccount,
@@ -57,6 +57,8 @@ const SignupForm = () => {
 		const newUser = await CreateUserAccount(values);
 
 		console.log(newUser);
+
+		console.log(newUser);
 		if (!newUser) {
 			return toast({
 				title: 'Signup Failed, Please Try Again',
@@ -74,15 +76,11 @@ const SignupForm = () => {
 			});
 		}
 
-		const isLoggedIn = await checkAuthUser();
+		const isLoggedIn = await CheckAuthUser();
 
 		if (isLoggedIn) {
 			form.reset();
 			navigate('/');
-			toast({
-				title: 'Welcome to Snapfluence',
-				description: 'You are now logged in',
-			});
 		} else {
 			toast({
 				title: 'Signup Failed, Please Try Again',
