@@ -1,4 +1,4 @@
-import { ID } from 'appwrite';
+import { ID, Query } from 'appwrite';
 import { INewUser } from '@/types';
 import {
 	account,
@@ -86,7 +86,7 @@ export async function getCurrentUser() {
 		const currentUser = await database.listDocuments(
 			appwriteConfig.databaseId,
 			appwriteConfig.userCollectionId,
-			[`accountId= ${currentAccount.$id}`]
+			[Query.equal('accountId', currentAccount.$id)]
 		);
 
 		if (!currentUser) throw new Error('User not found');
@@ -94,6 +94,5 @@ export async function getCurrentUser() {
 		return currentUser.documents[0];
 	} catch (error) {
 		console.log(error);
-		
 	}
 }
