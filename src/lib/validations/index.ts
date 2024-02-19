@@ -7,9 +7,14 @@ export const SignupValidationSchema = z.object({
 		.min(2, { message: 'Too Short' })
 		.max(20),
 	email: z.string().email(),
-	password: z
-		.string()
-		.min(6, {
-			message: 'Password must be at least 6 characters',
-		}),
+	password: z.string().min(6, {
+		message: 'Password must be at least 6 characters',
+	}),
+});
+
+export const SigninValidationSchema = z.object({
+	email: z.string().email(),
+	password: z.string().min(6, {
+		message: 'Password must be at least 6 characters',
+	}),
 });
