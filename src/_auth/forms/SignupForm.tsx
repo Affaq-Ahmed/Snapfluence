@@ -96,7 +96,7 @@ const SignupForm = () => {
 
 				<form
 					onSubmit={form.handleSubmit(onSubmit)}
-					className='flex-col gap-5 w-full mt-5 md:mt-10'
+					className='flex flex-col gap-5 w-full mt-5 md:mt-10'
 				>
 					<FormField
 						control={form.control}
@@ -172,7 +172,7 @@ const SignupForm = () => {
 
 					<Button
 						type='submit'
-						className='shad-button_primary w-full flex items-center justify-center '
+						className='shad-button_primary w-full flex items-center justify-center'
 					>
 						{isCreatingUser ? (
 							<div className='flex justify-center gap-2'>
