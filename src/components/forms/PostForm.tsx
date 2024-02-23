@@ -18,6 +18,7 @@ import { Models } from 'appwrite';
 import { useUserContext } from '@/context/AuthContext';
 import { useToast } from '../ui/use-toast';
 import { useNavigate } from 'react-router-dom';
+import { useCreatePostMutation } from '@/lib/react-query/queriesAndMutations';
 
 type IPostFormProps = {
 	post?: Models.Document;
@@ -30,7 +31,7 @@ const PostForm = ({ post }: IPostFormProps) => {
 	const {
 		mutateAsync: createPost,
 		isPending: isLoadingCreate,
-	} = useCreatePost();
+	} = useCreatePostMutation();
 
 	const form = useForm<z.infer<typeof PostValidation>>({
 		resolver: zodResolver(PostValidation),
