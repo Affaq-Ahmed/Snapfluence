@@ -203,10 +203,70 @@ export async function getRecentPosts() {
 			[Query.orderDesc('$createdAt'), Query.limit(10)]
 		);
 
-		console.log(posts);
 		if (!posts) throw new Error('No posts found');
 
 		return posts;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+export async function likePost(
+	postId: string,
+	likesArray: string[]
+) {
+	try {
+		const updatedPost = await database.updateDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.postCollectionId,
+			postId,
+			{
+				likes: likesArray,
+			}
+		);
+
+		if (!updatedPost) throw Error;
+
+		return updatedPost;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+export async function savePost(
+	postId: string,
+	userId: string
+) {
+	try {
+		const updatedPost = await database.updateDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.saveCollectionId,
+			ID.unique(),
+			{
+				user: userId,
+				post: postId,
+			}
+		);
+
+		if (!updatedPost) throw Error;
+
+		return updatedPost;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+export async function deleteSavedPost(savedPostId: string) {
+	try {
+		const deletedPost = await database.deleteDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.saveCollectionId,
+			savedPostId
+		);
+
+		if (!deletedPost) throw Error;
+
+		return deletedPost;
 	} catch (error) {
 		console.log(error);
 	}
