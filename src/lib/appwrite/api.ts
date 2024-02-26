@@ -238,7 +238,7 @@ export async function savePost(
 	userId: string
 ) {
 	try {
-		const updatedPost = await database.updateDocument(
+		const updatedPost = await database.createDocument(
 			appwriteConfig.databaseId,
 			appwriteConfig.saveCollectionId,
 			ID.unique(),
@@ -258,15 +258,16 @@ export async function savePost(
 
 export async function deleteSavedPost(savedPostId: string) {
 	try {
-		const deletedPost = await database.deleteDocument(
+
+		const statusCode = await database.deleteDocument(
 			appwriteConfig.databaseId,
 			appwriteConfig.saveCollectionId,
 			savedPostId
 		);
 
-		if (!deletedPost) throw Error;
+		if (!statusCode) throw Error;
 
-		return deletedPost;
+		return { statusCode: 'ok' };
 	} catch (error) {
 		console.log(error);
 	}
