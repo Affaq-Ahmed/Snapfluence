@@ -19,12 +19,14 @@ import { useUserContext } from '@/context/AuthContext';
 import { useToast } from '../ui/use-toast';
 import { useNavigate } from 'react-router-dom';
 import { useCreatePostMutation } from '@/lib/react-query/queriesAndMutations';
+import Loader from '../shared/Loader';
 
 type IPostFormProps = {
 	post?: Models.Document;
+	action: 'Update' | 'Create';
 };
 
-const PostForm = ({ post }: IPostFormProps) => {
+const PostForm = ({ post, action }: IPostFormProps) => {
 	const { user } = useUserContext();
 	const { toast } = useToast();
 	const navigate = useNavigate();
@@ -59,6 +61,8 @@ const PostForm = ({ post }: IPostFormProps) => {
 		}
 		navigate('/');
 	}
+
+	if (isLoadingCreate) return <Loader />;
 
 	return (
 		<Form {...form}>
