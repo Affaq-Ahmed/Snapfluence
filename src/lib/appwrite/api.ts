@@ -258,7 +258,6 @@ export async function savePost(
 
 export async function deleteSavedPost(savedPostId: string) {
 	try {
-
 		const statusCode = await database.deleteDocument(
 			appwriteConfig.databaseId,
 			appwriteConfig.saveCollectionId,
@@ -268,6 +267,22 @@ export async function deleteSavedPost(savedPostId: string) {
 		if (!statusCode) throw Error;
 
 		return { statusCode: 'ok' };
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+export async function getPostById(postId: string) {
+	try {
+		const post = await database.getDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.postCollectionId,
+			postId
+		);
+
+		if (!post) throw new Error('Post not found');
+
+		return post;
 	} catch (error) {
 		console.log(error);
 	}
