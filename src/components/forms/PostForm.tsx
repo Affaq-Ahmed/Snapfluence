@@ -69,7 +69,7 @@ const PostForm = ({ post, action }: IPostFormProps) => {
 					description: 'Could not update post, try again!',
 				});
 			}
-			navigate(`/posts/${post.$id}`);
+			return navigate(`/posts/${post.$id}`);
 		}
 
 		const newPost = await createPost({
