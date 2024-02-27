@@ -18,7 +18,10 @@ import { Models } from 'appwrite';
 import { useUserContext } from '@/context/AuthContext';
 import { useToast } from '../ui/use-toast';
 import { useNavigate } from 'react-router-dom';
-import { useCreatePostMutation } from '@/lib/react-query/queriesAndMutations';
+import {
+	useCreatePostMutation,
+	useUpdatePostMutation,
+} from '@/lib/react-query/queriesAndMutations';
 import Loader from '../shared/Loader';
 
 type IPostFormProps = {
@@ -34,6 +37,10 @@ const PostForm = ({ post, action }: IPostFormProps) => {
 		mutateAsync: createPost,
 		isPending: isLoadingCreate,
 	} = useCreatePostMutation();
+	const {
+		mutateAsync: updatePost,
+		isPending: isLoadingUpdate,
+	} = useUpdatePostMutation();
 
 	const form = useForm<z.infer<typeof PostValidation>>({
 		resolver: zodResolver(PostValidation),
@@ -48,6 +55,23 @@ const PostForm = ({ post, action }: IPostFormProps) => {
 	async function onSubmit(
 		values: z.infer<typeof PostValidation>
 	) {
+		if (post && action === 'Update') {
+			const updatedPost = await updatePost({
+				...values,
+				postId: post.$id,
+				imageId: post.imageId,
+				imageUrl: post.imageUrl,
+			});
+
+			if (!updatedPost) {
+				toast({
+					title: 'Error',
+					description: 'Could not update post, try again!',
+				});
+			}
+			navigate(`/posts/${post.$id}`);
+		}
+
 		const newPost = await createPost({
 			...values,
 			userId: user.id,
@@ -61,8 +85,6 @@ const PostForm = ({ post, action }: IPostFormProps) => {
 		}
 		navigate('/');
 	}
-
-	if (isLoadingCreate) return <Loader />;
 
 	return (
 		<Form {...form}>
@@ -159,8 +181,13 @@ const PostForm = ({ post, action }: IPostFormProps) => {
 					<Button
 						type='submit'
 						className='shad-button_primary whitespace-nowrap'
+						disabled={isLoadingCreate || isLoadingUpdate}
 					>
-						Submit
+						{isLoadingCreate || isLoadingUpdate ? (
+							<Loader />
+						) : (
+							'submit'
+						)}
 					</Button>
 				</div>
 			</form>
