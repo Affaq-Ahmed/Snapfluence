@@ -15,7 +15,7 @@ type PostStatsProps = {
 };
 
 const PostStats = ({ post, userId }: PostStatsProps) => {
-	const likesList = post.likes.map(
+	const likesList = post?.likes.map(
 		(user: Models.Document) => user.$id
 	);
 
@@ -34,7 +34,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 
 	const savedPostRecord = currentUser?.save.find(
 		(savedPost: Models.Document) =>
-			savedPost.post.$id === post.$id
+			savedPost.post.$id === post?.$id
 	);
 
 	useEffect(() => {
@@ -57,7 +57,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 		setLikes(newLikes);
 
 		likePost({
-			postId: post.$id,
+			postId: post?.$id || '',
 			likesArray: newLikes,
 		});
 	};
@@ -70,7 +70,7 @@ const PostStats = ({ post, userId }: PostStatsProps) => {
 			deleteSavedPost({ savedPostId: savedPostRecord.$id });
 		} else {
 			savePost({
-				postId: post.$id,
+				postId: post?.$id || '',
 				userId,
 			});
 			setIsSaved(true);
