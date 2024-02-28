@@ -366,3 +366,47 @@ export async function deletePost(
 		console.log(error);
 	}
 }
+
+export async function getInfinitePosts({
+	pageParam,
+}: {
+	pageParam: number;
+}) {
+	const queries: any[] = [
+		Query.orderDesc('$updatedAt'),
+		Query.limit(10),
+	];
+
+	if (pageParam)
+		queries.push(Query.cursorAfter(pageParam.toString()));
+
+	try {
+		const posts = await database.listDocuments(
+			appwriteConfig.databaseId,
+			appwriteConfig.postCollectionId,
+			queries
+		);
+
+		if (!posts) throw new Error('No posts found');
+
+		return posts;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+export async function searchPosts(searchTerm: string) {
+	try {
+		const posts = await database.listDocuments(
+			appwriteConfig.databaseId,
+			appwriteConfig.postCollectionId,
+			[Query.search('caption', searchTerm)]
+		);
+
+		if (!posts) throw new Error('No posts found');
+
+		return posts;
+	} catch (error) {
+		console.log(error);
+	}
+}
