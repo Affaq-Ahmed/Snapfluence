@@ -372,7 +372,7 @@ export async function getInfinitePosts({
 }: {
 	pageParam: number;
 }) {
-	const queries: any[] = [
+	const queries: string[] = [
 		Query.orderDesc('$updatedAt'),
 		Query.limit(10),
 	];
@@ -406,6 +406,22 @@ export async function searchPosts(searchTerm: string) {
 		if (!posts) throw new Error('No posts found');
 
 		return posts;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+export async function getUsers() {
+	try {
+		const users = await database.listDocuments(
+			appwriteConfig.databaseId,
+			appwriteConfig.userCollectionId,
+			[Query.limit(10)]
+		);
+
+		if (!users) throw new Error('No users found');
+
+		return users;
 	} catch (error) {
 		console.log(error);
 	}
