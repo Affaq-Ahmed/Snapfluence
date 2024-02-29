@@ -174,7 +174,9 @@ const SignupForm = () => {
 						type='submit'
 						className='shad-button_primary w-full flex items-center justify-center'
 					>
-						{isCreatingUser ? (
+						{isCreatingUser ||
+						isSigningIn ||
+						isUserLoading ? (
 							<div className='flex justify-center gap-2'>
 								<Loader /> Loading...
 							</div>
