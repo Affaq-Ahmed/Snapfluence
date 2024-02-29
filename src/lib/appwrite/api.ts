@@ -1,5 +1,10 @@
 import { ID, Query } from 'appwrite';
-import { INewPost, INewUser, IUpdatePost } from '@/types';
+import {
+	INewPost,
+	INewUser,
+	IUpdatePost,
+	IUpdateUser,
+} from '@/types';
 import {
 	account,
 	appwriteConfig,
@@ -438,6 +443,64 @@ export async function getUserById(userId: string) {
 		if (!user) throw new Error('User not found');
 
 		return user;
+	} catch (error) {
+		console.log(error);
+	}
+}
+
+export async function updateUser(user: IUpdateUser) {
+	const hasFile = user.file.length > 0;
+	try {
+		let image = {
+			imageUrl: user.imageUrl,
+			imageId: user.imageId,
+		};
+
+		if (hasFile) {
+			//Uplaod File first
+			const uploadedFile = await uploadFile(user.file[0]);
+
+			if (!uploadedFile) throw new Error();
+
+			const fileUrl = getFilePreview(uploadedFile.$id);
+
+			if (!fileUrl) {
+				await deleteFile(uploadedFile.$id);
+				throw new Error();
+			}
+
+			image = {
+				...image,
+				imageUrl: fileUrl,
+				imageId: uploadedFile.$id,
+			};
+		}
+
+		const updatedUser = await database.updateDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.userCollectionId,
+			user.userId,
+			{
+				name: user.name,
+				username: user.username,
+				email: user.email,
+				bio: user.bio,
+				imageUrl: image.imageUrl,
+			}
+		);
+
+		if (!updatedUser) {
+			if (hasFile) {
+				await deleteFile(image.imageId);
+			}
+			throw new Error('User not updated');
+		}
+
+		if (user.imageId && hasFile) {
+			await deleteFile(user.imageId);
+		}
+
+		return updatedUser;
 	} catch (error) {
 		console.log(error);
 	}
