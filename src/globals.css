@@ -267,11 +267,11 @@
 
 	/* Button */
 	.shad-button_primary {
-		@apply h-12 rounded bg-primary-500 hover:bg-primary-500 text-light-1 px-5 flex gap-2 !important;
+		@apply h-12 rounded-md bg-primary-500 hover:bg-primary-500 text-light-1 px-5 py-3 flex gap-2 !important;
 	}
 
 	.shad-button_dark_4 {
-		@apply h-12 rounded bg-dark-4 px-5 text-light-1 flex gap-2 !important;
+		@apply h-12 rounded-md bg-dark-4 px-5 py-3 text-light-1 flex gap-2 !important;
 	}
 
 	.shad-button_ghost {
