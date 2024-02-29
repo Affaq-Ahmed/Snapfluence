@@ -426,3 +426,19 @@ export async function getUsers() {
 		console.log(error);
 	}
 }
+
+export async function getUserById(userId: string) {
+	try {
+		const user = await database.getDocument(
+			appwriteConfig.databaseId,
+			appwriteConfig.userCollectionId,
+			userId
+		);
+
+		if (!user) throw new Error('User not found');
+
+		return user;
+	} catch (error) {
+		console.log(error);
+	}
+}
