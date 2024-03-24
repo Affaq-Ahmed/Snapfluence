@@ -2,22 +2,35 @@ import Loader from '@/components/shared/Loader';
 import PostStats from '@/components/shared/PostStats';
 import { Button } from '@/components/ui/button';
 import { useUserContext } from '@/context/AuthContext';
-import { useGetPostById } from '@/lib/react-query/queriesAndMutations';
+import {
+	useDeletePostMutation,
+	useGetPostById,
+} from '@/lib/react-query/queriesAndMutations';
 import { multiFormatDateString } from '@/lib/utils';
-import { Link, useParams } from 'react-router-dom';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 
 const PostDetails = () => {
+	const navigate = useNavigate();
 	const { id } = useParams();
 	const { user } = useUserContext();
-	const { data: post, isPending } = useGetPostById(
-		id || ''
-	);
+	const { data: post, isPending } = useGetPostById(id || '');
 
-	const handleDeletePost = () => {};
+	const { mutate: deletePost, isPending: isDeletingPost } =
+		useDeletePostMutation();
+
+	const handleDeletePost = () => {
+		console.log(post?.$id);
+		deletePost({
+			postId: post?.$id || '',
+			imageId: post?.imageId || '',
+		});
+
+		navigate('/');
+	};
 
 	return (
 		<div className='post_details-container'>
-			{isPending ? (
+			{isPending || isDeletingPost ? (
 				<Loader />
 			) : (
 				<div className='post_details-card'>
@@ -47,9 +60,7 @@ const PostDetails = () => {
 									</p>
 									<div className='flex items-center justify-center gap-2 text-light-3'>
 										<p className='subtle-semibold lg: small-regular'>
-											{multiFormatDateString(
-												post?.$createdAt
-											)}
+											{multiFormatDateString(post?.$createdAt)}
 										</p>
 										-
 										<p className='subtle-semibold lg: small-regular'>
@@ -63,8 +74,7 @@ const PostDetails = () => {
 								<Link
 									to={`/edit-post/${post?.$id}`}
 									className={`${
-										user.id !== post?.creator.$id &&
-										'hidden'
+										user.id !== post?.creator.$id && 'hidden'
 									}`}
 								>
 									<img
@@ -78,8 +88,7 @@ const PostDetails = () => {
 								<Button
 									variant='ghost'
 									className={`ghost_details-delete_btn ${
-										user.id !== post?.creator.$id &&
-										'hidden'
+										user.id !== post?.creator.$id && 'hidden'
 									}`}
 									onClick={handleDeletePost}
 								>
